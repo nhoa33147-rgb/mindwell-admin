@@ -12,7 +12,7 @@ const GlobalHistory = () => {
     const fetchHistory = async () => {
       setLoading(true);
       try {
-        const response = await fetch('https://mindwell-server.vercel.app/api/reports/global-history');
+        const response = await fetch('https://mindwell-server-c802.onrender.com/api/reports/global-history');
         const result = await response.json();
         if (response.ok) setData(result);
       } catch (e) { console.log(e); }
