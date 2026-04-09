@@ -2,9 +2,7 @@ import axios from 'axios';
 
 // 1. Khởi tạo ông shipper
 const axiosClient = axios.create({
-  baseURL: 'http://192.168.1.85:5000/api',
-  //baseURL: 'https://mindwell-server.vercel.app/api', // Thay đổi port này nếu backend của bạn chạy cổng khác
-  //baseURL: 'https://hastier-techily-alethea.ngrok-free.dev/api',
+  baseURL: 'mindwell-server-c802.onrender.com',
   headers: {
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': 'true'

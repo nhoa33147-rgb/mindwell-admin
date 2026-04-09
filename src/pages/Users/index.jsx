@@ -54,7 +54,7 @@ const Users = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://mindwell-server.vercel.app/api/users/admin/all');
+      const response = await fetch('https://mindwell-server-c802.onrender.com/api/users/admin/all');
       const data = await response.json();
       const formattedUsers = data.map(u => ({
         id: u._id, name: u.name, email: u.email, 
@@ -72,7 +72,7 @@ const Users = () => {
     setIsAdding(true);
     try {
       // Giả định API tạo user của sếp là /api/users/admin/create (Sếp có thể sửa lại nếu URL khác nhé)
-      const response = await fetch('https://mindwell-server.vercel.app/api/auth/register', {
+      const response = await fetch('https://mindwell-server-c802.onrender.com/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -103,7 +103,7 @@ const Users = () => {
 
   const handleToggleStatus = async (record) => {
     try {
-      const response = await fetch(`https://mindwell-server.vercel.app/api/users/admin/user/${record.id}/status`, { method: 'PUT' });
+      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/users/admin/user/${record.id}/status`, { method: 'PUT' });
       const data = await response.json();
       if (response.ok) {
         message.success(data.message);
@@ -119,7 +119,7 @@ const Users = () => {
       okText: 'Xóa vĩnh viễn', okType: 'danger', cancelText: 'Hủy',
       onOk: async () => {
         try {
-          const response = await fetch(`https://mindwell-server.vercel.app/api/users/admin/user/${id}`, { method: 'DELETE' });
+          const response = await fetch(`https://mindwell-server-c802.onrender.com/api/users/admin/user/${id}`, { method: 'DELETE' });
           if (response.ok) {
             message.success('Đã xóa thành công!');
             setUsers(users.filter(u => u.id !== id));
@@ -158,7 +158,7 @@ const Users = () => {
     setIsDrawerVisible(true);
     setLoadingHistory(true);
     try {
-      const response = await fetch(`https://mindwell-server.vercel.app/api/test-results/admin/user/${record.id}`);
+      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/test-results/admin/user/${record.id}`);
       const data = await response.json();
       setUserHistory(data);
     } catch (error) { message.error("Lỗi khi tải lịch sử bài test."); } 

@@ -90,7 +90,7 @@ const RedFlags = () => {
 
   const handleAssignTicket = async () => {
     try {
-      const response = await fetch(`https://mindwell-server.vercel.app/api/reports/red-flags/${currentTicket?.id}`, {
+      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/reports/red-flags/${currentTicket?.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -114,7 +114,7 @@ const RedFlags = () => {
 
   const handleUpdateTicket = async (values) => {
     try {
-      const response = await fetch(`https://mindwell-server.vercel.app/api/reports/red-flags/${currentTicket?.id}`, {
+      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/reports/red-flags/${currentTicket?.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -139,7 +139,7 @@ const RedFlags = () => {
   const fetchHistoryTickets = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://mindwell-server.vercel.app/api/reports/red-flags');
+      const response = await fetch('https://mindwell-server-c802.onrender.com/api/reports/red-flags');
       const data = await response.json();
       if (response.ok) {
         const sortedData = data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
