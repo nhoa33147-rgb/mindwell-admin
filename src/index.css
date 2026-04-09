@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
+* { box-sizing: border-box; }
+
+body { 
+  margin: 0; 
+  padding: 0; 
+  font-family: 'Nunito', sans-serif !important; 
+  /* Đổi nền sang màu Xám lạnh cực nhạt để Thẻ trắng nổi bật lên */
+  background-color: #F4F7F8 !important; 
+}
+
+/* TẠO CHIỀU SÂU VÀ ĐỘ NÉT CHO LAYOUT */
+.ant-layout {
+  background: transparent !important;
+}
+
+.ant-layout-sider {
+  background-color: #FFFFFF !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02) !important;
+  border-right: 1px solid #E5E7EB !important;
+  z-index: 10;
+}
+
+.ant-layout-header {
+  background: #FFFFFF !important; 
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  border-bottom: 1px solid #E5E7EB !important;
+  z-index: 9;
+}
+
+/* THẺ (CARD) SẮC NÉT, BO GÓC GỌN GÀNG HƠN */
+.ant-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid #E5E7EB !important; /* Viền mỏng tạo độ sắc nét */
+  background-color: #FFFFFF !important;
+  border-radius: 16px !important;
+}
+
+.ant-card-head {
+  border-bottom: 1px solid #F3F4F6 !important;
+  padding: 0 20px !important;
+}
+
+/* ĐỔI MÀU SIDEBAR MENU */
+.ant-menu-item-selected {
+  background-color: #E6F0ED !important; /* Xanh teal cực nhạt */
+  color: #165C51 !important;
+  font-weight: 700;
+  border-radius: 8px;
+}
