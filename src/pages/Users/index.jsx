@@ -31,6 +31,9 @@ const removeVietnameseTones = (str) => {
   return str.toLowerCase().trim();
 };
 
+// Hàm lấy Token
+const getToken = () => localStorage.getItem('accessToken');
+
 const Users = () => {
   const mindWellColor = '#165C51';
   const [form] = Form.useForm();
@@ -45,17 +48,22 @@ const Users = () => {
   const [userHistory, setUserHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
-  // Biến quản lý Drawer Thêm Sinh Viên
   const [isAddDrawerVisible, setIsAddDrawerVisible] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => { fetchUsers(); }, []);
 
+  // 👇 Đã thêm Token
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://mindwell-server-c802.onrender.com/api/users/admin/all');
+      const response = await fetch('https://mindwell-server-c802.onrender.com/api/users/admin/all', {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
       const data = await response.json();
+      
+      if (!response.ok) throw new Error(data.message);
+
       const formattedUsers = data.map(u => ({
         id: u._id, name: u.name, email: u.email, 
         status: u.status || 'active', 
@@ -63,24 +71,25 @@ const Users = () => {
         avatar: u.avatar
       }));
       setUsers(formattedUsers);
-    } catch (error) { message.error('Lỗi tải danh sách sinh viên.'); } 
+    } catch (error) { message.error('Phiên đăng nhập hết hạn hoặc lỗi mạng.'); } 
     finally { setLoading(false); }
   };
 
-  // 👇 HÀM MỚI: XỬ LÝ THÊM SINH VIÊN
   const handleAddUser = async (values) => {
     setIsAdding(true);
     try {
-      // Giả định API tạo user của sếp là /api/users/admin/create (Sếp có thể sửa lại nếu URL khác nhé)
       const response = await fetch('https://mindwell-server-c802.onrender.com/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}` // Thêm token cho chắc
+        },
         body: JSON.stringify({
           name: values.name,
           email: values.email,
           password: values.password,
           studentCode: values.studentCode,
-          role: 'student' // Mặc định role
+          role: 'student'
         })
       });
 
@@ -88,22 +97,23 @@ const Users = () => {
 
       if (response.ok) {
         message.success('Thêm sinh viên thành công!');
-        setIsAddDrawerVisible(false); // Đóng ngăn kéo
-        form.resetFields(); // Xóa trắng form
-        fetchUsers(); // Tải lại danh sách
+        setIsAddDrawerVisible(false);
+        form.resetFields();
+        fetchUsers();
       } else {
         message.error(data.message || 'Lỗi khi thêm sinh viên!');
       }
-    } catch (error) {
-      message.error('Lỗi kết nối máy chủ!');
-    } finally {
-      setIsAdding(false);
-    }
+    } catch (error) { message.error('Lỗi kết nối máy chủ!'); } 
+    finally { setIsAdding(false); }
   };
 
+  // 👇 Đã thêm Token
   const handleToggleStatus = async (record) => {
     try {
-      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/users/admin/user/${record.id}/status`, { method: 'PUT' });
+      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/users/admin/user/${record.id}/status`, { 
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
       const data = await response.json();
       if (response.ok) {
         message.success(data.message);
@@ -112,6 +122,7 @@ const Users = () => {
     } catch (error) { message.error('Lỗi mạng khi thay đổi trạng thái!'); }
   };
 
+  // 👇 Đã thêm Token
   const handleDelete = (id, name) => {
     Modal.confirm({
       title: 'Xác nhận xóa vĩnh viễn?',
@@ -119,7 +130,10 @@ const Users = () => {
       okText: 'Xóa vĩnh viễn', okType: 'danger', cancelText: 'Hủy',
       onOk: async () => {
         try {
-          const response = await fetch(`https://mindwell-server-c802.onrender.com/api/users/admin/user/${id}`, { method: 'DELETE' });
+          const response = await fetch(`https://mindwell-server-c802.onrender.com/api/users/admin/user/${id}`, { 
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+          });
           if (response.ok) {
             message.success('Đã xóa thành công!');
             setUsers(users.filter(u => u.id !== id));
@@ -153,12 +167,15 @@ const Users = () => {
 
   const categories = getCategorizedProgress();
 
+  // 👇 Đã thêm Token
   const openHistoryDrawer = async (record) => {
     setSelectedUser(record);
     setIsDrawerVisible(true);
     setLoadingHistory(true);
     try {
-      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/test-results/admin/user/${record.id}`);
+      const response = await fetch(`https://mindwell-server-c802.onrender.com/api/test-results/admin/user/${record.id}`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
       const data = await response.json();
       setUserHistory(data);
     } catch (error) { message.error("Lỗi khi tải lịch sử bài test."); } 
@@ -219,7 +236,7 @@ const Users = () => {
   return (
     <Card bordered={false} style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.03)', borderRadius: '16px' }}>
       
-      {/* 👇 CHỐNG VỠ LAYOUT HEADER 👇 */}
+      {/* HEADER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <Title level={3} style={{ color: mindWellColor, margin: 0, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           Quản Lý Người Dùng
@@ -229,7 +246,7 @@ const Users = () => {
         </Button>
       </div>
 
-      {/* 👇 CHỐNG VỠ LAYOUT THANH TÌM KIẾM 👇 */}
+      {/* THANH TÌM KIẾM */}
       <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
         <Input placeholder="Tìm kiếm..." prefix={<SearchOutlined />} style={{ width: 300, flexGrow: 1, maxWidth: '100%', borderRadius: '8px' }} value={searchText} onChange={e => setSearchText(e.target.value)} allowClear />
         <Select defaultValue="all" style={{ width: 170 }} value={statusFilter} onChange={setStatusFilter}>
@@ -239,7 +256,7 @@ const Users = () => {
         </Select>
       </div>
 
-      {/* 👇 CHỐNG ÉP GIÒ BẢNG CHÍNH 👇 */}
+      {/* BẢNG CHÍNH */}
       <Table columns={columns} dataSource={filteredUsers} rowKey="id" loading={loading} pagination={{ pageSize: 8 }} scroll={{ x: 'max-content' }} />
 
       {/* DRAWER XEM LỊCH SỬ TIẾN TRÌNH */}
@@ -253,7 +270,6 @@ const Users = () => {
             <Row gutter={[16, 16]}>
               {categories.map((cat, index) => (
                 <Col span={24} key={index}>
-                  {/* 👇 CHỐNG VỠ LAYOUT CARD TIẾN TRÌNH 👇 */}
                   <div style={{ padding: '20px', backgroundColor: '#FFF', borderRadius: '16px', border: `1px solid ${cat.color}20`, boxShadow: '0 4px 12px rgba(0,0,0,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
                     <div style={{ flex: 1, minWidth: '250px' }}>
                       <Tag color="blue" style={{ marginBottom: '8px', borderRadius: '4px', fontWeight: 600 }}>{cat.title}</Tag>
@@ -277,7 +293,6 @@ const Users = () => {
         </div>
         <Divider orientation="left" style={{ fontWeight: 800 }}>Lịch sử đánh giá chi tiết</Divider>
         
-        {/* 👇 CHỐNG ÉP GIÒ BẢNG LỊCH SỬ 👇 */}
         <Table size="small" dataSource={userHistory} rowKey="_id" loading={loadingHistory} scroll={{ x: 'max-content' }}
           columns={[
             { title: 'Bài Test', dataIndex: 'testTitle' },

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 1. Khởi tạo ông shipper
 const axiosClient = axios.create({
-  baseURL: 'mindwell-server-c802.onrender.com',
+  baseURL: 'https://mindwell-server-c802.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': 'true'
